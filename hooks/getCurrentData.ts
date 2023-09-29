@@ -9,7 +9,18 @@ const getData = async(city:string)=>{
         };
 
 
-export default function useCurrentData(city:string){
-    type key = string
- return   useQuery({queryKey:['currentData',city],queryFn:getData(city)})
+export default function useCurrentWeatherData(city:string){
+
+        const currentWeatherData = useQuery({queryKey:['current'],
+            queryFn:async ()=>{
+                
+        const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=5523c0463b154c3b8ab152458230909&q=Lagos&aqi=yes`)
+        //console.log(response)
+        if (!response.ok) {
+            console.log(Error)
+          }
+          return response.json()
+          
+            }})
+            return currentWeatherData
 }

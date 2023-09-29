@@ -5,97 +5,80 @@ import { useState, useEffect } from 'react';
 import { useGlobalSearchParams, useLocalSearchParams,  } from 'expo-router';
 import { useQuery,useQueryClient } from '@tanstack/react-query';
 import Animated,{useSharedValue,withTiming} from 'react-native-reanimated';
-
+import useCurrentWeatherData from 'hooks/getCurrentData';
+import useForecastWeatherData from 'hooks/getForecastData';
 const windowHeight = Dimensions.get('window').height
 const screenWidth = Dimensions.get('window').width
 
-type  props = {
-    city:string
-   
-}
 
-const ImageView = () => {
+const ImageView:React.FC = () => {
 const queryClient = useQueryClient()
 
 
-    const [presentRoute,setPresentRoute] = useState(useLocalSearchParams())
-    const route = useGlobalSearchParams()
-
-    const[forecastdata,setforecastData] = useState(
-        {
-            temperature_c:'ffff',
-            temperature_f:'fff',
-            date:null,
-            feelsLike:null,
-            weatherCondition:'fff',
-            isLoading:true
-        }
-    )
+        const [presentRoute,setPresentRoute] = useState(useLocalSearchParams())
         const [defaultState,setDefaultState]=useState(true)
-        
-    const { isLoading, isError, data, error } = useQuery({queryKey:['current'],
-            queryFn:async ()=>{
-                
-        const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=5523c0463b154c3b8ab152458230909&q=Lagos&aqi=yes`)
-        //console.log(response)
-        if (!response.ok) {
-            console.log(error)
-          }
-          return response.json()
-          
-            }})
-
-            const nextdayQuery = useQuery({queryKey:['nextday'],
-        queryFn:async ()=>{
-                
-            const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=5523c0463b154c3b8ab152458230909&q=Lagos&days=2aqi=yes`)
-            //console.log(response)
-            if (!response.ok) {
-                console.log(error)
-              }
-              return response.json()
+        const currentData = useCurrentWeatherData('Lagos')
+        const forecastData = useForecastWeatherData(2,'Lagos')
               
-                }})
-
-
                 useEffect(()=>{
                     if (presentRoute.route==='Tomorrow') {
                         setDefaultState(false)
-                        setforecastData({
-                            temperature_c:nextdayQuery?.data?.forecast?.forecastday[0] .day?.avgtemp_c,
-                            temperature_f:nextdayQuery?.data?.forecast?.forecastday[0] .day?.avgtemp_f,
-                            feelsLike:null,
-                            weatherCondition:nextdayQuery?.data?.forecast?.forecastday[0] .day?.condition?.text,
-                            date:'Tommorrow',
-                            isLoading:nextdayQuery.isLoading
-                        })
+                        
                        
-                    }else{
-                        setforecastData({
-                            temperature_c:data?.current?.temp_c,
-                            temperature_f:data?.current?.temp_f,
-                            feelsLike:data?.current?.feelslike_c,
-                            weatherCondition:data?.current?.condition.text,
-                            date:data?.location?.localtime,
-                            isLoading:isLoading
-                        })
-                       
-
                     }
-                },[presentRoute.route,isLoading,defaultState])
+                },[defaultState,currentData.isLoading,])
         
-    
+   if ( presentRoute.route!=='Tomorrow') {
+    return(
+    <View style={styles.scrollview}>
+
+    <View style={styles.imageContainer}>
+  <Image  style={{flex:1,
+    borderBottomLeftRadius:10,
+    borderBottomRightRadius:10,
+    }}
+     source={{uri:'https://images.unsplash.com/photo-1692678420673-ba7a27ad70cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzfHx8ZW58MHx8fHx8&auto=format&fit=crop&w=1000&q=60'}}>
+        
+     </Image>
+  </View>
+  <View style={styles.cityContainer}>
+
+            <Text style={[styles.whiteTextVColor,styles.CityText]}>
+                Lagos
+            <Pressable><Entypo name='triangle-down' size={15} color={'white'}/></Pressable>
+
+            </Text>
+
+            </View>
+
+            <Pressable style={styles.searchButton}><Feather name='search' size={24} color={'white'}/></Pressable>
+
+            <Text style={[styles.whiteTextVColor,styles.temperatureText]}>{currentData.isLoading?<ActivityIndicator size={'large'}/>:currentData.data.current.temp_c}</Text>
+            <Text style={[styles.whiteTextVColor,styles.dateText]}>{currentData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:currentData.data.location.localtime}</Text>
+
+            <View style={styles.weatherIconContainer}>
+                <Text style={[styles.whiteTextVColor,styles.weatherDescriptiontext]}>{currentData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:currentData.data.current.condition.text}</Text>
+            </View>
+
+            <View style={styles.nightAndDayContainer}>
+                <Text style={[styles.whiteTextVColor,styles.nightAndDayText]}>{currentData.isLoading?<ActivityIndicator size={'large'}/>:currentData.data.temperature_c}</Text>
+                <Text style={[styles.whiteTextVColor,styles.nightAndDayText]}>Night -1</Text>
+            </View>
+<StatusBar hidden={true}/>
+</View>
+  ) } 
+  else if( presentRoute.route==='Tomorrow'){
   return (
     <View style={styles.scrollview}>
 
         <View style={styles.imageContainer}>
-      <Animated.Image  style={{flex:1,
+      <Image  style={{flex:1,
         borderBottomLeftRadius:10,
         borderBottomRightRadius:10,
         }}
          source={{uri:'https://images.unsplash.com/photo-1692678420673-ba7a27ad70cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzfHx8ZW58MHx8fHx8&auto=format&fit=crop&w=1000&q=60'}}>
             
-         </Animated.Image>
+         </Image>
       </View>
       <View style={styles.cityContainer}>
 
@@ -109,21 +92,21 @@ const queryClient = useQueryClient()
 
                 <Pressable style={styles.searchButton}><Feather name='search' size={24} color={'white'}/></Pressable>
 
-                <Text style={[styles.whiteTextVColor,styles.temperatureText]}>{forecastdata.isLoading?<ActivityIndicator size={'large'}/>:forecastdata.temperature_c}</Text>
-                <Text style={[styles.whiteTextVColor,styles.dateText]}>{forecastdata.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:forecastdata.date}</Text>
+                <Text style={[styles.whiteTextVColor,styles.temperatureText]}>{forecastData.isLoading?<ActivityIndicator size={'large'}/>:forecastData.data.forecast.forecastday[1].day.avgtemp_c}</Text>
+                <Text style={[styles.whiteTextVColor,styles.dateText]}>{forecastData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:null}</Text>
 
                 <View style={styles.weatherIconContainer}>
-                    <Text style={[styles.whiteTextVColor,styles.weatherDescriptiontext]}>{forecastdata.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:forecastdata.weatherCondition}</Text>
+                    <Text style={[styles.whiteTextVColor,styles.weatherDescriptiontext]}>{forecastData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:forecastData.data.forecast.forecastday[1].day.condition.text}</Text>
                 </View>
 
                 <View style={styles.nightAndDayContainer}>
-                    <Text style={[styles.whiteTextVColor,styles.nightAndDayText]}>{forecastdata.isLoading?<ActivityIndicator size={'large'}/>:forecastdata.temperature_c}</Text>
+                    <Text style={[styles.whiteTextVColor,styles.nightAndDayText]}>{forecastData.isLoading?<ActivityIndicator size={'large'}/>:forecastData.data.forecast.forecastday[1].day.avgtemp_c}</Text>
                     <Text style={[styles.whiteTextVColor,styles.nightAndDayText]}>Night -1</Text>
                 </View>
     <StatusBar hidden={true}/>
     </View>
   )
-}
+}}
 
 export default ImageView
 
