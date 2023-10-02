@@ -18,14 +18,14 @@ const Progressbars = ({time,probability}:props) => {
       <Text>{time}</Text>
 
       <View style={styles.progressContainer}>
-        <View style={{width:probability*progressWidth,
+        <View style={{width:(probability/100)*progressWidth,
                       backgroundColor:'purple',
                       height:0.027*screenheight,
     borderRadius:10
   }}></View>
       </View>
 
-      <Text>{probability*100}%</Text>
+      <Text>{probability}%</Text>
     </View>
   )
 }

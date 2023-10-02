@@ -13,22 +13,38 @@ const screenWidth = Dimensions.get('window').width
 
 const ImageView:React.FC = () => {
 const queryClient = useQueryClient()
+const currentDate = new Date();
+
+// Add one day to the current date to get tomorrow's date
+currentDate.setDate(currentDate.getDate() + 1);
+
+// Convert the date to a string in your desired format (e.g., "yyyy-mm-dd")
+const tomorrowDate = currentDate.toISOString().slice(0, 10);
 
 
         const [presentRoute,setPresentRoute] = useState(useLocalSearchParams())
+        const [temperature,settemperature]= useState('')
+        const [feelsLike,setfeelsLike] = useState('')
+        const [date,setdate] = useState('')
+        const [weatherCondition,setweathercondition] = useState('')
         const [defaultState,setDefaultState]=useState(true)
         const currentData = useCurrentWeatherData('Lagos')
         const forecastData = useForecastWeatherData(2,'Lagos')
               
                 useEffect(()=>{
-                    if (presentRoute.route==='Tomorrow') {
-                        setDefaultState(false)
-                        
+                    if (presentRoute.route==='Tomorrow'&& forecastData.isLoading===false) {
+                        settemperature(forecastData.data.forecast.forecastday[1].day.avgtemp_c)
+                        setdate(`${tomorrowDate}, Tomorrow`)
+                        setfeelsLike(forecastData.data.forecast.forecastday[1].day.condition.text)
                        
+                    }else if (presentRoute.route!=='Tomorrow'&& currentData.isLoading===false){
+                        settemperature(currentData.data.current.temp_c)
+                        setdate(currentData.data.location.localtime)
+                        setfeelsLike(currentData.data.current.condition.text)
                     }
-                },[defaultState,currentData.isLoading,])
+                },[currentData.isLoading,forecastData.isLoading,presentRoute])
         
-   if ( presentRoute.route!=='Tomorrow') {
+   if ( presentRoute.route!=='Tomorrow' && currentData.isLoading===false) {
     return(
     <View style={styles.scrollview}>
 
@@ -53,21 +69,21 @@ const queryClient = useQueryClient()
 
             <Pressable style={styles.searchButton}><Feather name='search' size={24} color={'white'}/></Pressable>
 
-            <Text style={[styles.whiteTextVColor,styles.temperatureText]}>{currentData.isLoading?<ActivityIndicator size={'large'}/>:currentData.data.current.temp_c}</Text>
-            <Text style={[styles.whiteTextVColor,styles.dateText]}>{currentData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:currentData.data.location.localtime}</Text>
+            <Text style={[styles.whiteTextVColor,styles.temperatureText]}>{currentData.isLoading?<ActivityIndicator size={'large'}/>:temperature}</Text>
+            <Text style={[styles.whiteTextVColor,styles.dateText]}>{currentData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:date}</Text>
 
             <View style={styles.weatherIconContainer}>
-                <Text style={[styles.whiteTextVColor,styles.weatherDescriptiontext]}>{currentData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:currentData.data.current.condition.text}</Text>
+                <Text style={[styles.whiteTextVColor,styles.weatherDescriptiontext]}>{currentData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:feelsLike}</Text>
             </View>
 
             <View style={styles.nightAndDayContainer}>
-                <Text style={[styles.whiteTextVColor,styles.nightAndDayText]}>{currentData.isLoading?<ActivityIndicator size={'large'}/>:currentData.data.temperature_c}</Text>
+                <Text style={[styles.whiteTextVColor,styles.nightAndDayText]}>{currentData.isLoading?<ActivityIndicator size={'large'}/>:temperature}</Text>
                 <Text style={[styles.whiteTextVColor,styles.nightAndDayText]}>Night -1</Text>
             </View>
 <StatusBar hidden={true}/>
 </View>
   ) } 
-  else if( presentRoute.route==='Tomorrow'){
+  else if( presentRoute.route==='Tomorrow'&& forecastData.isLoading===false){
   return (
     <View style={styles.scrollview}>
 
@@ -92,15 +108,15 @@ const queryClient = useQueryClient()
 
                 <Pressable style={styles.searchButton}><Feather name='search' size={24} color={'white'}/></Pressable>
 
-                <Text style={[styles.whiteTextVColor,styles.temperatureText]}>{forecastData.isLoading?<ActivityIndicator size={'large'}/>:forecastData.data.forecast.forecastday[1].day.avgtemp_c}</Text>
-                <Text style={[styles.whiteTextVColor,styles.dateText]}>{forecastData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:null}</Text>
+                <Text style={[styles.whiteTextVColor,styles.temperatureText]}>{forecastData.isLoading?<ActivityIndicator size={'large'}/>:temperature}</Text>
+                <Text style={[styles.whiteTextVColor,styles.dateText]}>{forecastData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:date}</Text>
 
                 <View style={styles.weatherIconContainer}>
-                    <Text style={[styles.whiteTextVColor,styles.weatherDescriptiontext]}>{forecastData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:forecastData.data.forecast.forecastday[1].day.condition.text}</Text>
+                    <Text style={[styles.whiteTextVColor,styles.weatherDescriptiontext]}>{forecastData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:feelsLike}</Text>
                 </View>
 
                 <View style={styles.nightAndDayContainer}>
-                    <Text style={[styles.whiteTextVColor,styles.nightAndDayText]}>{forecastData.isLoading?<ActivityIndicator size={'large'}/>:forecastData.data.forecast.forecastday[1].day.avgtemp_c}</Text>
+                    <Text style={[styles.whiteTextVColor,styles.nightAndDayText]}>{forecastData.isLoading?<ActivityIndicator size={'large'}/>:temperature}</Text>
                     <Text style={[styles.whiteTextVColor,styles.nightAndDayText]}>Night -1</Text>
                 </View>
     <StatusBar hidden={true}/>

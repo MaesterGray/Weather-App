@@ -29,7 +29,7 @@ const AppContainer = ({city}:props) => {
        <ScrollView style={styles.scrollview}>
         <ParameterMap context='' city={city}/>
         <Weatherdisplay city={city}/>
-        <ChanceofRain city='Lagos'/>
+        <ChanceofRain city={city}/>
        </ScrollView>
 
     </QueryClientProvider>

@@ -17,7 +17,7 @@ const Tendayscontainer = ({city}:Prop) => {
     const { isLoading, isError, data, error } = useQuery({queryKey:['current',city],
     queryFn:async ()=>{
         
-  const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=5523c0463b154c3b8ab152458230909&q=${city}&days=10&aqi=yes`)
+  const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=5523c0463b154c3b8ab152458230909&q=${city}&days=5&aqi=yes`)
   if (!response.ok) {
     console.log(error)
   }

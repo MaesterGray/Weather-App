@@ -4,7 +4,8 @@ import React,{useEffect, useState} from 'react'
 import { AntDesign } from '@expo/vector-icons';
 import { useQueryClient,useQuery, } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router';
-
+import useCurrentWeatherData from 'hooks/getCurrentData';
+import useForecastWeatherData from 'hooks/getForecastData';
 
 
 
@@ -22,48 +23,27 @@ type props = {
 const Weatherdisplay = ({city}:props) => {
 const queryClient = useQueryClient()
 const [presentRoute,setpresentroute]=useState(useLocalSearchParams())
-const [hourlyforecast,sethourlyforecas]= useState<[]|any[]>([])
-const [loading,setloading]= useState(true)  
 
-  const { isLoading, isError, data, error } = useQuery({queryKey:['current',city],
-  queryFn:async ()=>{
-      
-const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=5523c0463b154c3b8ab152458230909&q=${city}&days=1&aqi=yes`)
-if (!response.ok) {
-  console.log(error)
-}
-return response.json()
 
-  }})
 
-  const nextdayQuery = useQuery({queryKey:['nextday'],
-        queryFn:async ()=>{
-                
-            const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=5523c0463b154c3b8ab152458230909&q=Lagos&days=2aqi=yes`)
-            //console.log(response)
-            if (!response.ok) {
-                console.log(error)
-              }
-              return response.json()
-              
-                }})
+const currentData = useForecastWeatherData(1,city)
+const forecastData = useForecastWeatherData(2,city)
+
+const [currentHourlyForecast ,setcurrentHourlyForecast] = useState([])
+const [TomorrowHourlyForecast ,setTomorrowHourlyForecast] = useState([])
+
  
-                useEffect(()=>{
-                  
-                    console.log(presentRoute)
-                  if (presentRoute.route==='Tomorrow'&& nextdayQuery.data) {
-                    setloading(nextdayQuery.isLoading)
-                    sethourlyforecas(nextdayQuery.data.forecast?.forecastday[1]?.hour)
-                    
-
-                  }else if(data)  {
-                    setloading(isLoading) 
-                    sethourlyforecas(data.forecast?.forecastday[0]?.hour)
-                  }
-                },[loading,presentRoute])
+useEffect(()=>{
+if (currentData.isLoading===false&& presentRoute.route !== 'Tomorrow') {
+  setcurrentHourlyForecast(currentData.data?.forecast?.forecastday[0].hour)
+} else if (forecastData.isLoading===false && presentRoute.route === 'Tomorrow'){
+  setTomorrowHourlyForecast(forecastData.data.forecast.forecastday[1].hour)
+}
+},[presentRoute.route,currentData.isLoading,forecastData.isLoading])
+ 
 
   
-  if (presentRoute.route==='Tomorrow') {
+  if (presentRoute.route==='Tomorrow' && forecastData.isLoading===false) {
     return (
       <View style={styles.container}>
     
@@ -71,25 +51,34 @@ return response.json()
     <View style={styles.iconContainer}><AntDesign name='clockcircleo' size={15} color={'black'}/></View>
     <Text style={{fontSize:13}}>Hourly Forecast</Text>
     </View>
-    <FlatList data={hourlyforecast} horizontal={true} renderItem={({item})=>(<Forecasticons time={'11'} temperature={item.temp_c} isLoading={isLoading}/>)} showsHorizontalScrollIndicator={false} >
+    <FlatList data={TomorrowHourlyForecast} horizontal={true} renderItem={({item,index})=>(<Forecasticons time={index} temperature={item.temp_c} isLoading={forecastData.isLoading}/>)} showsHorizontalScrollIndicator={false} >
       
     </FlatList>
     </View>
     )
   }
-if (data) {
+ else if (presentRoute.route !== 'Tomorrow'&& currentData.isLoading===false) {
   return (
     <View style={styles.container}>
   
   <View style={{flexDirection:'row',alignItems:'center',gap:5}}>
   <View style={styles.iconContainer}><AntDesign name='clockcircleo' size={15} color={'black'}/></View>
-  <Text style={{fontSize:13}}>Hourly Forecast</Text>
+  <Text style={{fontSize:13}}>Hourly Forecasts</Text>
   </View>
-  <FlatList data={hourlyforecast} horizontal={true} renderItem={({item})=>(<Forecasticons time={'11'} temperature={item.temp_c} isLoading={isLoading}/>)} showsHorizontalScrollIndicator={false} >
+  <FlatList data={currentHourlyForecast} horizontal={true} renderItem={({item,index})=>(<Forecasticons time={index} temperature={item.temp_c} isLoading={currentData.isLoading}/>)} showsHorizontalScrollIndicator={false} >
     
   </FlatList>
   </View>
     )
+} else if (currentData.isLoading===true) {
+  <View style={styles.container}>
+  
+  <View style={{flexDirection:'row',alignItems:'center',gap:5}}>
+  <View style={styles.iconContainer}><AntDesign name='clockcircleo' size={15} color={'black'}/></View>
+  <Text style={{fontSize:13}}>Hourly Forecasts</Text>
+  </View>
+      <ActivityIndicator size={'large'}/>
+  </View>
 }
 
 

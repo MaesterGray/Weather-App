@@ -7,7 +7,7 @@ const screenheight = Dimensions.get('window').height
 const screenWidth = Dimensions.get('window').width
 
 type prop ={
-    time:string,
+    time:number,
     temperature:string,
     isLoading:boolean
 }
@@ -21,16 +21,18 @@ const Forecasticons = ({time,temperature,isLoading}:prop) => {
       <ActivityIndicator size={'small'} color={'black'} />
     </View>
     
+  }else  if (isLoading===false) {
+    return (
+      <View style={styles.container}>
+      <Text style={{fontSize:9,fontWeight:'700',}}>{time}</Text>
+      <FontAwesome5 name='cloud-rain' size={20} color='purple'/>
+        <Text style={{fontSize:11}}>{temperature}</Text>
+    </View>
+    )
+  }
   }
 
-  return (
-    <View style={styles.container}>
-    <Text style={{fontSize:9,fontWeight:'700',}}>{time}</Text>
-    <FontAwesome5 name='cloud-rain' size={20} color='purple'/>
-      <Text style={{fontSize:11}}>{temperature}</Text>
-  </View>
-  )
-}
+  
 
 export default Forecasticons
 

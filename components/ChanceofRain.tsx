@@ -5,7 +5,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { FontAwesome5 } from '@expo/vector-icons';
 import ProgressBarsHoc from './ProgressBarsHoc';
 import { useQuery,useQueryClient } from '@tanstack/react-query';
-
+import useForecastWeatherData from 'hooks/getForecastData';
 
 const windowHeight = Dimensions.get('window').height
 const screenWidth = Dimensions.get('window').width
@@ -40,86 +40,70 @@ const getRangeFromArray=(arr:[], start:number, end:number)=> {
 
 const ChanceofRain = ({city}:Prop) => {
   const [presentRoute,setPresentRoute] = useState(useLocalSearchParams())
-  
-  const ranges = []
-
-
-  const queryClient = useQueryClient()
-
-  const { isLoading, isError, data, error } = useQuery({queryKey:['current',city],
-  queryFn:async ()=>{
-      
-  const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=5523c0463b154c3b8ab152458230909&q=${city}&days=1&aqi=yes`)
-  console.log(response)
-  if (!response.ok) {
-  console.log(error)
-  }
-  return response.json()}
-})
-
-const nextdayQuery = useQuery({queryKey:['nextday'],
-queryFn:async ()=>{
-        
-    const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=5523c0463b154c3b8ab152458230909&q=Lagos&days=2aqi=yes`)
-    //console.log(response)
-    if (!response.ok) {
-        console.log(error)
-      }
-      return response.json()
-      
-        }})
-
-
-
-
-
+    const [currentHourlyChanceofRainRanges,setcurrentHourlyChanceofRainRanges] = useState<any>([])
+    const [tomorrowHourlyChanceOfRainRanges,settomorrowHourlychanceofRainChanges] = useState<any>([])
+    const currentData = useForecastWeatherData(1,city)
+    const tomorrowData = useForecastWeatherData(2,city)
 useEffect(()=>{
 
  
 
-  if(presentRoute.route==='Tomorrow' && data){
-    console.log(nextdayQuery.data.forecast?.forecastday[1]?.hour.length)
-    const dawndata = nextdayQuery.data.forecast?.forecastday[1]?.hour.slice(0,4)
-    const morningdata =   nextdayQuery.data.forecast?.forecastday[1]?.hour.slice(4,8)
-    const middaydata = nextdayQuery.data.forecast?.forecastday[1]?.hour.slice(8,12)
-    const afternoondata = nextdayQuery.data.forecast?.forecastday[1]?.hour.slice(12,16)
-    const eveningdata =nextdayQuery.data.forecast?.forecastday[1]?.hour.slice(16,20)
-    const nightdata = nextdayQuery.data.forecast?.forecastday[1]?.hour.slice(20,24)
-    
-    ranges.push(dawndata,morningdata,middaydata,afternoondata,eveningdata,nightdata)
+  if(presentRoute.route==='Tomorrow'&& tomorrowData.isLoading===false ){
+   settomorrowHourlychanceofRainChanges([
+    getRangeFromArray( tomorrowData.data.forecast.forecastday[1].hour,0,3),
+    getRangeFromArray( tomorrowData.data.forecast.forecastday[1].hour,4,7),
+    getRangeFromArray( tomorrowData.data.forecast.forecastday[1].hour,8,11),
+    getRangeFromArray( tomorrowData.data.forecast.forecastday[1].hour,12,15),
+    getRangeFromArray( tomorrowData.data.forecast.forecastday[1].hour,16,19),
+    getRangeFromArray( tomorrowData.data.forecast.forecastday[1].hour,20,23),
 
+   ])
+   console.log(tomorrowHourlyChanceOfRainRanges.length,)
    
-  }else if(data){
-    const dawndata = data.forecast?.forecastday[0]?.hour.slice(0,4)
-    const morningdata =   data.forecast?.forecastday[0]?.hour.slice(4,8)
-    const middaydata = data.forecast?.forecastday[0]?.hour.slice(8,12)
-    const afternoondata = data.forecast?.forecastday[0]?.hour.slice(12,16)
-    const eveningdata =data.forecast?.forecastday[0]?.hour.slice(16,20)
-    const nightdata = data.forecast?.forecastday[0]?.hour.slice(20,24)
-    
+  }else if(presentRoute.route !== 'Tomorrow'&& currentData.isLoading===false){
+   setcurrentHourlyChanceofRainRanges([
+    getRangeFromArray( currentData.data.forecast.forecastday[1].hour,0,3),
+    getRangeFromArray( currentData.data.forecast.forecastday[1].hour,4,7),
+    getRangeFromArray( currentData.data.forecast.forecastday[1].hour,8,11),
+    getRangeFromArray( currentData.data.forecast.forecastday[1].hour,12,15),
+    getRangeFromArray( currentData.data.forecast.forecastday[1].hour,16,19),
+    getRangeFromArray( currentData.data.forecast.forecastday[1].hour,20,23),
 
-    ranges.push(dawndata,morningdata,middaydata,afternoondata,eveningdata,nightdata)
-    console.log(ranges[0],'ranges')
+
+   ])
   }
 
 
 
-},[presentRoute.route])
+},[presentRoute.route,currentData.isLoading,tomorrowData.isLoading])
 
 
 
 
   const scroll = useRef(null)
-  return (
-    <View style={styles.chanceOfRainContainer}>
-                <View style={{flexDirection:'row',alignItems:'center',gap:5}}>
-                    <View style={styles.iconContainer}><FontAwesome5 name='cloud-rain' color={'black'} size={15}/></View>
-                    <Text>Chance of Rain</Text>
-                </View>
-               { isLoading?<ActivityIndicator size={'large'}/>: <FlatList ref={scroll} horizontal={true} data={ranges} renderItem={({item})=>(<ProgressBarsHoc arr={item}/>)} showsHorizontalScrollIndicator={false} />}
-            </View>
-  )
-}
+  if (presentRoute.route !== 'Tomorrow' && currentData.isLoading===false) {
+    return (
+      <View style={styles.chanceOfRainContainer}>
+                  <View style={{flexDirection:'row',alignItems:'center',gap:5}}>
+                      <View style={styles.iconContainer}><FontAwesome5 name='cloud-rain' color={'black'} size={15}/></View>
+                      <Text>Chance of Rain</Text>
+                  </View>
+                 <FlatList ref={scroll} horizontal={true} data={currentHourlyChanceofRainRanges} renderItem={({item})=>(<ProgressBarsHoc arr={item}/>)} showsHorizontalScrollIndicator={false} />
+              </View>
+    )
+  }else if(presentRoute.route === 'Tomorrow ' && tomorrowData.isLoading===false){
+    return (
+      <View style={styles.chanceOfRainContainer}>
+                  <View style={{flexDirection:'row',alignItems:'center',gap:5}}>
+                      <View style={styles.iconContainer}><FontAwesome5 name='cloud-rain' color={'black'} size={15}/></View>
+                      <Text>Chance of Rain</Text>
+                  </View>
+                 <FlatList ref={scroll} horizontal={true} data={tomorrowHourlyChanceOfRainRanges} renderItem={({item})=>(<ProgressBarsHoc arr={item}/>)} showsHorizontalScrollIndicator={false} />
+              </View>
+              )
+  }
+  
+  }
 
 export default ChanceofRain
 

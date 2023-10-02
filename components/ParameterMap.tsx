@@ -39,46 +39,48 @@ const queryClient = useQueryClient()
     {parameter:'Precipitation',value1:'',value2:''},
     {parameter:'UV-Index',value1:'',value2:null}
   ])
-
+const [forecastWeatherData,setforecastweatherdata]= useState(
+  [
+    {parameter:'Wind-Speed',value1:'',value2:''},
+    {parameter:'Humidity',value1:'',value2:null},
+    {parameter:'Pressure',value1:'',value2:''},
+    {parameter:'Precipitation',value1:'',value2:''},
+    {parameter:'UV-Index',value1:'',value2:null}
+  ]
+)
 
   
 
-  // let forecastweatherparameters =[
-  //   {parameter:'Wind-Speed',value1:forecastData.data.forecast.forecastday[1].day.maxwind_mph,value2:forecastData.data.forecast.forecastday[1].day.maxwind_kph},
-  //   {paraeter:'Humidity',value1:forecastData.data.forecast.forecastday[1].day.avghumidity,value2:null},
-  //   {parameter:'Precip',value1:forecastData.data.forecast.forecastday[1].day.totalprecip_mm,value2:forecastData.data.forecast.forecastday[1].day.total.precip_in},
-  //   {parameter:'UV-Index',value1:forecastData.data.forecast.forecastday[1].day.uv,value2:null}
-  // ]
-
+  
 
   useEffect(()=>{
-    console.log(currentData.isLoading)
-    if (currentData.isLoading===false) {
+    if (currentData.isLoading===false && presentRoute.route !== 'Tomorrow') {
     
       setCurrentWeatherData([{parameter:'Wind-Speed',value1:currentData.data.current.wind_mph,value2:currentData.data.current.wind_kph},
       {parameter:'Humidity',value1:currentData.data.current.humidity,value2:null},
       {parameter:'Pressure',value1:currentData.data.current.pressure_mb,value2:currentData.data.current.pressure_mm},
-      {parameter:'Precip',value1:currentData.data.current.precip_mm,value2:currentData.data.current.precip_in},
+      {parameter:'Precipitation',value1:currentData.data.current.precip_mm,value2:currentData.data.current.precip_in},
       {parameter:'UV-Index',value1:currentData.data.current.uv,value2:null}]) 
   
       
     }
     
-    // if (forecastData.isLoading===false) {
-    //   console.log(forecastData.data.forecast.forecastday[1].day.maxwind_mph)
-    //   forecastweatherparameters =[
-    //     {parameter:'Wind-Speed',value1:forecastData.data.forecast.forecastday[1].day.maxwind_mph,value2:forecastData.data.forecast.forecastday[1].day.maxwind_kph},
-    //     {paraeter:'Humidity',value1:forecastData.data.forecast.forecastday[1].day.avghumidity,value2:null},
-    //     {parameter:'Precip',value1:forecastData.data.forecast.forecastday[1].day.totalprecip_mm,value2:forecastData.data.forecast.forecastday[1].day.total.precip_in},
-    //     {parameter:'UV-Index',value1:forecastData.data.forecast.forecastday[1].day.uv,value2:null}
-    //   ]
-    // }
+     if (forecastData.isLoading===false && presentRoute.route === 'Tomorrow') {
+    setforecastweatherdata ([
+        {parameter:'Wind-Speed',value1:forecastData.data.forecast.forecastday[1].day.maxwind_mph,value2:forecastData.data.forecast.forecastday[1].day.maxwind_kph},
+        {parameter:'Humidity',value1:forecastData.data.forecast.forecastday[1].day.avghumidity,value2:null},
+        {parameter:'Precipitation',value1:forecastData.data.forecast.forecastday[1].day.totalprecip_mm,value2:forecastData.data.forecast.forecastday[1].day.totalprecip_in},
+        {parameter:'UV-Index',value1:forecastData.data.forecast.forecastday[1].day.uv,value2:null}
+      ]
+    )
+    console.log(forecastWeatherData.length,forecastWeatherData[0])
+  }
      
   
-  },[forecastData.isLoading,currentData.isLoading])
+  },[forecastData.isLoading,currentData.isLoading,presentRoute])
 
  
-   if (presentRoute.route!== 'Tomorrow') {
+   if (presentRoute.route!== 'Tomorrow'&& currentData.isLoading===false) {
     return(
     
       <View style={ styles.container}>
@@ -88,12 +90,14 @@ const queryClient = useQueryClient()
       </View>
     )
   
-   }else if (presentRoute.route==='Tomorrow') {
+   }else if (presentRoute.route==='Tomorrow'&& forecastData.isLoading === false) {
+    return(
     <View style={ styles.container}>
-    {forecastweatherparameters.map((parameter,index)=>{return(
-      <Weatherparameter time='' key={index} isLoading={currentData.isLoading} value={parameter.value1} parameter={parameter.parameter} />
+    {forecastWeatherData.map((parameter,index)=>{return(
+      <Weatherparameter time='' key={index} isLoading={forecastData.isLoading} value={parameter.value1} parameter={parameter.parameter} />
     )})}
   </View>
+    )
    }
   
       }
