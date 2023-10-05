@@ -3,6 +3,8 @@ import React, {useState,useEffect} from 'react'
 import Animated,{withTiming} from 'react-native-reanimated'
 import { QueryClientProvider, QueryClient, useQueryClient} from '@tanstack/react-query'
 import AppContainer from 'components/AppContainer'
+import configurestore from 'redux/configurestore'
+import { Provider } from 'react-redux'
 
 
 
@@ -34,7 +36,9 @@ function index(){
   
   return (
     <QueryClientProvider client={queryClient}>
-    <AppContainer city='Lagos'/>
+      <Provider store={configurestore}>
+    <AppContainer />
+    </Provider>
     </QueryClientProvider>
   )
 }

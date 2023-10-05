@@ -5,6 +5,7 @@ import { useLocalSearchParams } from 'expo-router'
 import Weatherparameter from './Weatherparameter'
 import useCurrentWeatherData from 'hooks/getCurrentData'
 import useForecastWeatherData from 'hooks/getForecastData'
+import { useSelector } from 'react-redux/'
 
 
 type MyArrayItem = {
@@ -24,10 +25,11 @@ const screenheight = Dimensions.get('window').height
 const screenWidth = Dimensions.get('window').width
 
 
-const ParameterMap = ({city,}:Props) => {
+const ParameterMap = () => {
+  const { city } = useSelector((state)=> state.city)
 
-  const currentData = useCurrentWeatherData('Lagos')
-  const forecastData = useForecastWeatherData(2,'Lagos')
+  const currentData = useCurrentWeatherData(city)
+  const forecastData = useForecastWeatherData(2,city)
 
 const queryClient = useQueryClient()
   const [presentRoute,setpresentroute] = useState(useLocalSearchParams())
@@ -77,7 +79,7 @@ const [forecastWeatherData,setforecastweatherdata]= useState(
   }
      
   
-  },[forecastData.isLoading,currentData.isLoading,presentRoute])
+  },[forecastData.isLoading,currentData.isLoading,presentRoute,city])
 
  
    if (presentRoute.route!== 'Tomorrow'&& currentData.isLoading===false) {

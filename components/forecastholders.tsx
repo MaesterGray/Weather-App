@@ -43,7 +43,7 @@ export default Forecastholders
 
 const styles = StyleSheet.create({
   forecastContainer:{
-    height:0.0975 *windowHeight,
+    height:0.3 *windowHeight,
     width:0.915 * screenWidth,
     backgroundColor:'rgba(208,188,255,0.3)',
     borderRadius:10,

@@ -6,6 +6,7 @@ import { useQueryClient,useQuery, } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router';
 import useCurrentWeatherData from 'hooks/getCurrentData';
 import useForecastWeatherData from 'hooks/getForecastData';
+import { useSelector } from 'react-redux';
 
 
 
@@ -20,11 +21,12 @@ type props = {
 }
 
 
-const Weatherdisplay = ({city}:props) => {
+const Weatherdisplay = () => {
 const queryClient = useQueryClient()
 const [presentRoute,setpresentroute]=useState(useLocalSearchParams())
 
 
+const { city } = useSelector((state)=> state.city)
 
 const currentData = useForecastWeatherData(1,city)
 const forecastData = useForecastWeatherData(2,city)
@@ -39,7 +41,7 @@ if (currentData.isLoading===false&& presentRoute.route !== 'Tomorrow') {
 } else if (forecastData.isLoading===false && presentRoute.route === 'Tomorrow'){
   setTomorrowHourlyForecast(forecastData.data.forecast.forecastday[1].hour)
 }
-},[presentRoute.route,currentData.isLoading,forecastData.isLoading])
+},[presentRoute.route,currentData.isLoading,forecastData.isLoading,city])
  
 
   

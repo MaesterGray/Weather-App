@@ -7,7 +7,10 @@ import ImageView from './ImageView'
 import NavigationContainer from './NavigationContainer'
 import ParameterMap from './ParameterMap'
 import { useQueryClient,useQuery,QueryClientProvider,QueryClient } from '@tanstack/react-query'
-
+import { useDispatch,useSelector } from 'react-redux'
+import { setstring } from 'redux/city'
+import configurestore from 'redux/configurestore'
+import { Provider } from 'react-redux'
 
 type props = {
     city:string
@@ -17,21 +20,22 @@ type props = {
 const windowHeight = Dimensions.get('window').height
 const screenWidth = Dimensions.get('window').width
 
-const AppContainer = ({city}:props) => {
+const AppContainer = () => {
     const queryClient = useQueryClient()
-  
+    const dispatch = useDispatch()
+
 
   return (
    < QueryClientProvider client={queryClient}>
-        <ImageView />
+    <Provider store={configurestore}>
+        <ImageView  />
         <NavigationContainer/>
 
        <ScrollView style={styles.scrollview}>
-        <ParameterMap context='' city={city}/>
-        <Weatherdisplay city={city}/>
-        <ChanceofRain city={city}/>
+        <ParameterMap />
+        <Weatherdisplay />
        </ScrollView>
-
+       </Provider>
     </QueryClientProvider>
 
   )

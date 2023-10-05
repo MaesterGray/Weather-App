@@ -1,14 +1,24 @@
 import { StyleSheet, Text, View, FlatList,Pressable,Dimensions } from 'react-native'
 import { router,useLocalSearchParams } from 'expo-router'
 import {useState,useEffect} from 'react'
+import { useSelector } from 'react-redux'
 import React from 'react'
+import { setImageViewState } from 'redux/imageviewstate'
 
 
 const windowHeight = Dimensions.get('window').height
 const screenWidth = Dimensions.get('window').width
 
 const NavigationContainer = () => {
-    const data=[{display:'Today',route:'/'},{display:'Tommorow',route:'/other/Tomorrow'},{display:'10 days',route:'/tendays'}]
+    const {}= useSelector()
+
+    const data=[
+      {display:'Today',route:'/',navigationFn:()=>{router.push({pathname:`${data[0].route}`}); if ('') {
+        
+      }setImageViewState()}}
+      ,{display:'Tommorow',route:'/other/Tomorrow'},
+      {display:'10 days',route:'/tendays'}
+    ]
     const [renderState,setrenderState]= useState('Today')
     const route = useLocalSearchParams()
 
@@ -42,6 +52,5 @@ const styles = StyleSheet.create({
         height:0.070 * windowHeight,
         alignItems:'center',
         paddingright:0.038 * screenWidth,
-        backgroundColor:'rgb(246,237,255)'
       }
 })

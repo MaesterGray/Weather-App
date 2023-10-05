@@ -3,6 +3,7 @@ import React,{useEffect} from 'react'
 import { useQuery,useQueryClient } from '@tanstack/react-query'
 import Forecastholders from './forecastholders'
 import { dailyForecast } from 'models'
+import { useSelector } from 'react-redux/'
 
 
 type Prop ={
@@ -10,9 +11,10 @@ type Prop ={
   }
 
 
-const Tendayscontainer = ({city}:Prop) => {
+const Tendayscontainer = () => {
   
     const query = useQueryClient()
+    const { city } = useSelector((state)=> state.city)
   
     const { isLoading, isError, data, error } = useQuery({queryKey:['current',city],
     queryFn:async ()=>{
