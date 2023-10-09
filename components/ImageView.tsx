@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,Dimensions,Pressable,StatusBar,ActivityIndicator,Modal, FlatList } from 'react-native'
+import { StyleSheet, Text, View,Dimensions,Pressable,StatusBar,ActivityIndicator,Modal, FlatList ,Button,Image, ImageSourcePropType} from 'react-native'
 import React from 'react'
 import { FontAwesome5,Feather,Entypo } from '@expo/vector-icons';
 import { useState, useEffect } from 'react';
@@ -10,7 +10,8 @@ import useForecastWeatherData from 'hooks/getForecastData';
 import { useDispatch,useSelector } from 'react-redux'
 import { setstring } from 'redux/city'
 import NavigationContainer from './NavigationContainer';
-import {Image} from 'expo-image'
+import { useWeatherIcon } from 'hooks/iconLogic';
+
 const windowHeight = Dimensions.get('window').height
 const screenWidth = Dimensions.get('window').width
 
@@ -37,9 +38,10 @@ const tomorrowDate = currentDate.toISOString().slice(0, 10);
         const [defaultState,setDefaultState]=useState(true)
         const [modalVisible,setModalVisible] = useState(false)
         const [compressedState,setCompressedstate] = useState(false)
-        const [currentImageSrc,setcurrentImagesrc] = useState('')
+        const [currentImageSrc,setcurrentImagesrc] = useState<ImageSourcePropType>()
         const [tomorrowImageSrc,setTomorrowImageSrc]= useState('')
-        const { city,imageViewState } = useSelector((state)=> state.city)
+        const { city} = useSelector((state)=> state.city)
+        const { imageViewState} = useSelector((state)=> state.imageViewState)
  
         const currentData = useCurrentWeatherData(city)
         const forecastData= useForecastWeatherData(2,city)
@@ -66,7 +68,7 @@ const tomorrowDate = currentDate.toISOString().slice(0, 10);
                         settemperature(forecastData.data.forecast.forecastday[1].day.avgtemp_c)
                         setdate(`${tomorrowDate}, Tomorrow`)
                         setfeelsLike(forecastData.data.forecast.forecastday[1].day.condition.text)
-                       setcurrentImagesrc(currentData.data.current.condition.icon)
+                       setcurrentImagesrc(useWeatherIcon(currentData.data.current.condition.code))
                     }else if (presentRoute.route!=='Tomorrow'&& currentData.isLoading===false){
                         settemperature(currentData.data.current.temp_c)
                         setdate(currentData.data.location.localtime)
@@ -90,12 +92,12 @@ const tomorrowDate = currentDate.toISOString().slice(0, 10);
 
          <View style={styles.cityContainer}>
             <Text style={[styles.whiteTextVColor,styles.CityText]}>{city}</Text>
-            <Pressable onPress={()=>setModalVisible(true)}>
-                <Entypo name='triangle-down' size={15} color={'white'}/>
+            <Pressable style={{width:0.09 * screenWidth,height:0.09 * screenWidth ,backgroundColor:'green',justifyContent:'center',alignItems:'center'}} onPress={()=>{setModalVisible(!modalVisible)}}>
+                <Entypo name='triangle-down' size={25} color={'white'}/>
             </Pressable>
-            <Modal animationType='slide' transparent={true} visible={modalVisible} >
-                    <View style={{borderBottomRightRadius:10,borderBottomLeftRadius:10}}>
-                    <FlatList data={hardCodedPlaces} renderItem={({item})=>(<Pressable style={styles.modalStrips} onPress={()=>{dispatch(setstring(item)); setModalVisible(false)}}><Text>{item}</Text></Pressable>)}/>
+            <Modal animationType='fade' transparent={true} visible={modalVisible} onRequestClose={()=>setModalVisible(false)} >
+                    <View style={{borderBottomRightRadius:10,borderBottomLeftRadius:10,position:'absolute',top:'10%',left:'5%',}}>
+                    <FlatList data={hardCodedPlaces} contentContainerStyle={{borderRadius:10}} renderItem={({item})=>(<Pressable style={styles.modalStrips} onPress={()=>{dispatch(setstring(item)); setModalVisible(false)}}><Text style={{color:'white',fontWeight:'400'}}>{item}</Text></Pressable>)}/>
                     </View>
                 </Modal>
             
@@ -109,8 +111,14 @@ const tomorrowDate = currentDate.toISOString().slice(0, 10);
             <Text style={[styles.whiteTextVColor,styles.dateText]}>{currentData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:date}</Text>
 
             <View style={styles.weatherIconContainer}>
+            <View style={{ justifyContent:'center',alignItems:'center'}}>
+                   {currentData.isLoading?<ActivityIndicator/>:<Image style={{flex:1}} source={currentImageSrc}/>}
+                </View>
                 <Text style={[styles.whiteTextVColor,styles.weatherDescriptiontext]}>{currentData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:feelsLike}</Text>
+              
             </View>
+
+                
 
             <View style={styles.nightAndDayContainer}>
                 <Text style={[styles.whiteTextVColor,styles.nightAndDayText]}>{currentData.isLoading?<ActivityIndicator size={'large'}/>:temperature}</Text>
@@ -217,6 +225,7 @@ const styles = StyleSheet.create({
         flexDirection:'column',
         top:'30%',
         right:'8%'
+
     },weatherIcon:{
         width:0.26 * screenWidth,
         height:0.26 * screenWidth
@@ -247,7 +256,8 @@ const styles = StyleSheet.create({
     },modalStrips:{
         justifyContent:'center',
         alignItems:'center',
-        backgroundColor:'rgba(208,188,255,0.3)',
+        backgroundColor:'rgb(208,188,255)',
+        width:0.355 * screenWidth
 
     },compressedStateContainer:{
         height: 0.255 * windowHeight,

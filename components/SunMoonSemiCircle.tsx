@@ -4,16 +4,15 @@ import Svg, { Circle, Path, Text as SvgText } from 'react-native-svg';
 import useForecastWeatherData from 'hooks/getForecastData';
 import useCurrentWeatherData from 'hooks/getCurrentData';
 import { useLocalSearchParams } from 'expo-router';
+import { useSelector } from 'react-redux';
 
 
-type props = {
-  city:string
-}
+const SunMoonSemiCircle = () => {
 
-const SunMoonSemiCircle = ({city}:props) => {
 
-  const [rising,setrising] = useState('')
-  const [setting,setsetting] = useState('')
+  const {city} = useSelector((state)=>state.city)
+  const [rising,setrising] = useState<number>()
+  const [setting,setsetting] = useState<number>()
   const Todaydata = useForecastWeatherData(1,city)
   const [presentRoute,setPresentRoute] = useState(useLocalSearchParams())
 
@@ -21,16 +20,15 @@ const SunMoonSemiCircle = ({city}:props) => {
   // Convert the rising and setting values to numbers
   if (presentRoute.route!=='Tomorrow'&& Todaydata.isLoading===false) {
     setrising(parseFloat(Todaydata.data.forecast.forecastday[0].astro.sunrise))
-    setsetting(parseFloat())
+    setsetting(parseFloat(Todaydata.data.forecast.forecastday[0].astro.sunset) + 12)
   }
-  const risingHours = parseFloat(rising);
-  const settingHours = parseFloat(setting)
+ 
   })
 ;
 
   // Calculate the angle for the sun and moon based on the rising and setting times
-  const sunAngle = 180 * (risingHours / 24); // Assuming rising is in hours (0-24)
-  const moonAngle = 180 * (settingHours / 24); // Assuming setting is in hours (0-24)
+  const sunAngle = 180 * (rising / 24); // Assuming rising is in hours (0-24)
+  const moonAngle = 180 * (setting / 24); // Assuming setting is in hours (0-24)
 
   return (
     <View>

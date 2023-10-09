@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import {useEffect,useState} from 'react'
+import { useSelector } from "react-redux";
+
 
 
 const getData = async(city:string)=>{
@@ -11,7 +13,7 @@ const getData = async(city:string)=>{
 
 export default function useCurrentWeatherData(city:string){
 
-        const currentWeatherData = useQuery({queryKey:['current'],
+        const currentWeatherData = useQuery({queryKey:['current',city],
             queryFn:async ()=>{
                 
         const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=5523c0463b154c3b8ab152458230909&q=${city}&aqi=yes`)

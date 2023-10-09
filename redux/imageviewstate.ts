@@ -9,7 +9,7 @@ const initialState:InitialState ={
 }
 
 export const imageViewSlice = createSlice({
-    name:'ImageViewState',
+    name:'imageViewState',
     initialState,
     reducers:{
         setImageViewState:(state)=>{

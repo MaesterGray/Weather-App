@@ -11,6 +11,7 @@ import { useDispatch,useSelector } from 'react-redux'
 import { setstring } from 'redux/city'
 import configurestore from 'redux/configurestore'
 import { Provider } from 'react-redux'
+import SunMoonSemiCircle from './SunMoonSemiCircle'
 
 type props = {
     city:string
@@ -34,7 +35,9 @@ const AppContainer = () => {
        <ScrollView style={styles.scrollview}>
         <ParameterMap />
         <Weatherdisplay />
+        <ChanceofRain/>
        </ScrollView>
+    
        </Provider>
     </QueryClientProvider>
 

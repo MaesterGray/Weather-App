@@ -12,15 +12,15 @@ type parameter ={
         {time:string,probability:number},
         {time:string,probability:number},
         {time:string,probability:number}]|any,
-    
+    multiple:number
 }
 
-const ProgressBarsHoc = ({arr}:parameter) => {
+const ProgressBarsHoc = ({arr,multiple}:parameter) => {
 
  
   return (
     <View style={styles.container}>
-        <FlatList data={arr} renderItem={({item})=>(<Progressbars time={'11'} probability={item.chance_of_rain}/>)} />
+        <FlatList data={arr} renderItem={({item,index})=>(<Progressbars time={`${multiple + (index)}:00`} probability={item.chance_of_rain}/>)} />
       <Text>{}</Text>
     </View>
   )

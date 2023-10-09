@@ -53,7 +53,7 @@ if (currentData.isLoading===false&& presentRoute.route !== 'Tomorrow') {
     <View style={styles.iconContainer}><AntDesign name='clockcircleo' size={15} color={'black'}/></View>
     <Text style={{fontSize:13}}>Hourly Forecast</Text>
     </View>
-    <FlatList data={TomorrowHourlyForecast} horizontal={true} renderItem={({item,index})=>(<Forecasticons time={index} temperature={item.temp_c} isLoading={forecastData.isLoading}/>)} showsHorizontalScrollIndicator={false} >
+    <FlatList data={TomorrowHourlyForecast} horizontal={true} renderItem={({item,index})=>(<Forecasticons time={`${index}:00`} temperature={item.temp_c} isLoading={forecastData.isLoading}/>)} showsHorizontalScrollIndicator={false} >
       
     </FlatList>
     </View>
@@ -67,7 +67,7 @@ if (currentData.isLoading===false&& presentRoute.route !== 'Tomorrow') {
   <View style={styles.iconContainer}><AntDesign name='clockcircleo' size={15} color={'black'}/></View>
   <Text style={{fontSize:13}}>Hourly Forecasts</Text>
   </View>
-  <FlatList data={currentHourlyForecast} horizontal={true} renderItem={({item,index})=>(<Forecasticons time={index} temperature={item.temp_c} isLoading={currentData.isLoading}/>)} showsHorizontalScrollIndicator={false} >
+  <FlatList data={currentHourlyForecast} horizontal={true} renderItem={({item,index})=>(<Forecasticons time={`${index}:00`} temperature={item.temp_c} isLoading={currentData.isLoading}/>)} showsHorizontalScrollIndicator={false} >
     
   </FlatList>
   </View>

@@ -46,6 +46,6 @@ const styles = StyleSheet.create({
     width:0.55 * screenWidth,
     height:0.027 * screenheight,
     backgroundColor:'rgb(250,237,255)',
-    borderRadius:10
+    borderRadius:10,
   }
 })

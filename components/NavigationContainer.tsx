@@ -10,14 +10,13 @@ const windowHeight = Dimensions.get('window').height
 const screenWidth = Dimensions.get('window').width
 
 const NavigationContainer = () => {
-    const {}= useSelector()
 
     const data=[
       {display:'Today',route:'/',navigationFn:()=>{router.push({pathname:`${data[0].route}`}); if ('') {
         
       }setImageViewState()}}
       ,{display:'Tommorow',route:'/other/Tomorrow'},
-      {display:'10 days',route:'/tendays'}
+     // {display:'10 days',route:'/tendays'}
     ]
     const [renderState,setrenderState]= useState('Today')
     const route = useLocalSearchParams()
@@ -43,7 +42,7 @@ const styles = StyleSheet.create({
         height:0.047* windowHeight,
         borderRadius:10,
         marginLeft:0.049* screenWidth,
-        width: 0.28 * screenWidth,
+        width: (0.28 * screenWidth) *1.5 ,
         justifyContent:'center',
         alignItems:'center',
         borderWidth:2,

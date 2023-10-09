@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View, Dimensions, Image } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, Dimensions,  } from 'react-native'
+import {Image} from 'expo-image'
+import React,{useEffect} from 'react'
 import { FlatList } from 'react-native-gesture-handler'
 
 
@@ -17,6 +18,8 @@ type Props ={
 }
 
 const Forecastholders = ({minTemp,maxTemp,WeatherCondition,date,imgsrc}:Props) => {
+
+
   return (
     <View style={styles.forecastContainer}>
 
@@ -32,7 +35,7 @@ const Forecastholders = ({minTemp,maxTemp,WeatherCondition,date,imgsrc}:Props) =
           <Text>{maxTemp}</Text>
         </View>
          
-         <Image source={{uri:imgsrc}} />
+         <Image style={{}} source={{uri:imgsrc}} />
       </View>
 
     </View>

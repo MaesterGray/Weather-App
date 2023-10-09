@@ -6,6 +6,8 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import ProgressBarsHoc from './ProgressBarsHoc';
 import { useQuery,useQueryClient } from '@tanstack/react-query';
 import useForecastWeatherData from 'hooks/getForecastData';
+import { useSelector } from 'react-redux';
+import index from 'app';
 
 const windowHeight = Dimensions.get('window').height
 const screenWidth = Dimensions.get('window').width
@@ -34,16 +36,16 @@ const getRangeFromArray=(arr:[], start:number, end:number)=> {
   }
   
 
-    type Prop = {
-      city:string
-    }
+   
 
-const ChanceofRain = ({city}:Prop) => {
+const ChanceofRain = () => {
   const [presentRoute,setPresentRoute] = useState(useLocalSearchParams())
     const [currentHourlyChanceofRainRanges,setcurrentHourlyChanceofRainRanges] = useState<any>([])
     const [tomorrowHourlyChanceOfRainRanges,settomorrowHourlychanceofRainChanges] = useState<any>([])
+    const {city} = useSelector((state)=>state.city)
     const currentData = useForecastWeatherData(1,city)
     const tomorrowData = useForecastWeatherData(2,city)
+    
 useEffect(()=>{
 
  
@@ -88,7 +90,7 @@ useEffect(()=>{
                       <View style={styles.iconContainer}><FontAwesome5 name='cloud-rain' color={'black'} size={15}/></View>
                       <Text>Chance of Rain</Text>
                   </View>
-                 <FlatList ref={scroll} horizontal={true} data={currentHourlyChanceofRainRanges} renderItem={({item})=>(<ProgressBarsHoc arr={item}/>)} showsHorizontalScrollIndicator={false} />
+                 <FlatList decelerationRate={0.97} progressViewOffset={2} ref={scroll} horizontal={true} data={currentHourlyChanceofRainRanges} renderItem={({item,index})=>(<ProgressBarsHoc multiple={index*4} arr={item}/>)} showsHorizontalScrollIndicator={false} />
               </View>
     )
   }else if(presentRoute.route === 'Tomorrow ' && tomorrowData.isLoading===false){
@@ -98,7 +100,7 @@ useEffect(()=>{
                       <View style={styles.iconContainer}><FontAwesome5 name='cloud-rain' color={'black'} size={15}/></View>
                       <Text>Chance of Rain</Text>
                   </View>
-                 <FlatList ref={scroll} horizontal={true} data={tomorrowHourlyChanceOfRainRanges} renderItem={({item})=>(<ProgressBarsHoc arr={item}/>)} showsHorizontalScrollIndicator={false} />
+                 <FlatList decelerationRate={'fast'} ref={scroll} horizontal={true} data={tomorrowHourlyChanceOfRainRanges} renderItem={({item,index})=>(<ProgressBarsHoc multiple={index+1} arr={item}/>)} showsHorizontalScrollIndicator={false} />
               </View>
               )
   }
