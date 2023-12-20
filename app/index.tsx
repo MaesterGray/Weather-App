@@ -5,6 +5,11 @@ import { QueryClientProvider, QueryClient, useQueryClient} from '@tanstack/react
 import AppContainer from 'components/AppContainer'
 import configurestore from 'redux/configurestore'
 import { Provider } from 'react-redux'
+import ChanceofRain from 'components/ChanceofRain'
+import ImageView from '../components/ImageView'
+import NavigationContainer from '../components/NavigationContainer'
+import Weatherdisplay from 'components/Weatherdisplay'
+import ParameterMap from '../components/ParameterMap'
 
 
 
@@ -37,11 +42,30 @@ function index(){
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={configurestore}>
-    <AppContainer />
+      <ImageView  />
+        <NavigationContainer/>
+
+       <ScrollView style={styles.scrollview}>
+        <ParameterMap />
+        <Weatherdisplay />
+        <ChanceofRain/>
+       </ScrollView>
+
     </Provider>
     </QueryClientProvider>
   )
 }
+
+const styles = StyleSheet.create({
+  scrollview:{
+      height:0.34 * windowHeight,
+      backgroundColor:'rgb(246,237,255)',
+  },
+  bottomScreen:{
+      height:0.538 * windowHeight,
+      alignItems:'baseline'
+  }
+})
 
 
    

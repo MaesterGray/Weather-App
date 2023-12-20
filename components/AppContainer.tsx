@@ -22,12 +22,10 @@ const windowHeight = Dimensions.get('window').height
 const screenWidth = Dimensions.get('window').width
 
 const AppContainer = () => {
-    const queryClient = useQueryClient()
     const dispatch = useDispatch()
 
 
   return (
-   < QueryClientProvider client={queryClient}>
     <Provider store={configurestore}>
         <ImageView  />
         <NavigationContainer/>
@@ -39,14 +37,13 @@ const AppContainer = () => {
        </ScrollView>
     
        </Provider>
-    </QueryClientProvider>
 
   )
 }
 
 export default AppContainer
 
-const styles = StyleSheet.create({
+ const styles = StyleSheet.create({
     scrollview:{
         height:0.34 * windowHeight,
         backgroundColor:'rgb(246,237,255)',

@@ -76,7 +76,6 @@ const tomorrowDate = currentDate.toISOString().slice(0, 10);
                     }
                 },[currentData.isLoading,forecastData.isLoading,presentRoute,city,forecastData])
         
-   if ( presentRoute.route!=='Tomorrow') {
     return(
     <View style={styles.scrollview}>
 
@@ -85,23 +84,27 @@ const tomorrowDate = currentDate.toISOString().slice(0, 10);
     borderBottomLeftRadius:10,
     borderBottomRightRadius:10,
     }}
-     source={{uri:'https://images.unsplash.com/photo-1692678420673-ba7a27ad70cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzfHx8ZW58MHx8fHx8&auto=format&fit=crop&w=1000&q=60'}}>
+     source={{uri:'https://images.unsplash.com/photo-1692678420673-ba7a27ad70cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzfHx8ZW58MHx8fHx8&auto=format&fit=crop&w=1000&q=60'}}/>
         
-     </Image>
   </View>
 
          <View style={styles.cityContainer}>
-            <Text style={[styles.whiteTextVColor,styles.CityText]}>{city}</Text>
+
+            <Text style={[styles.whiteTextVColor,styles.CityText]}>
+                {city}
+            </Text>
+
             <Pressable style={{width:0.09 * screenWidth,height:0.09 * screenWidth ,backgroundColor:'green',justifyContent:'center',alignItems:'center'}} onPress={()=>{setModalVisible(!modalVisible)}}>
                 <Entypo name='triangle-down' size={25} color={'white'}/>
             </Pressable>
-            <Modal animationType='fade' transparent={true} visible={modalVisible} onRequestClose={()=>setModalVisible(false)} >
-                    <View style={{borderBottomRightRadius:10,borderBottomLeftRadius:10,position:'absolute',top:'10%',left:'5%',}}>
-                    <FlatList data={hardCodedPlaces} contentContainerStyle={{borderRadius:10}} renderItem={({item})=>(<Pressable style={styles.modalStrips} onPress={()=>{dispatch(setstring(item)); setModalVisible(false)}}><Text style={{color:'white',fontWeight:'400'}}>{item}</Text></Pressable>)}/>
-                    </View>
-                </Modal>
-            
 
+            <Modal animationType='fade' transparent={true} visible={modalVisible} onRequestClose={()=>setModalVisible(false)} >
+
+                <View style={{borderBottomRightRadius:10,borderBottomLeftRadius:10,position:'absolute',top:'10%',left:'5%',}}>
+                <FlatList data={hardCodedPlaces} contentContainerStyle={{borderRadius:10}} renderItem={({item})=>(<Pressable style={styles.modalStrips} onPress={()=>{dispatch(setstring(item)); setModalVisible(false)}}><Text style={{color:'white',fontWeight:'400'}}>{item}</Text></Pressable>)}/>
+                </View>
+            </Modal>
+            
             </View>
 
                 <Pressable style={styles.searchButton}><Feather name='search' size={24} color={'white'}/></Pressable>
@@ -126,62 +129,8 @@ const tomorrowDate = currentDate.toISOString().slice(0, 10);
             </View>
 <StatusBar hidden={true}/>
 </View>
-  ) } 
-  else if( presentRoute.route==='Tomorrow'&& forecastData.isLoading===false){
-  return (
-    <View style={styles.scrollview}>
-
-        <View style={styles.imageContainer}>
-      <Image  style={{flex:1,
-        borderBottomLeftRadius:10,
-        borderBottomRightRadius:10,
-        }}
-         source={{uri:'https://images.unsplash.com/photo-1692678420673-ba7a27ad70cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzfHx8ZW58MHx8fHx8&auto=format&fit=crop&w=1000&q=60'}}>
-            
-         </Image>
-      </View>
-      <View style={styles.cityContainer}>
-
-                <Text style={[styles.whiteTextVColor,styles.CityText]}>
-                    {city}
-                <Pressable><Entypo name='triangle-down' size={15} color={'white'}/></Pressable>
-
-                </Text>
-
-                </View>
-
-                <Pressable style={styles.searchButton}><Feather name='search' size={24} color={'white'}/></Pressable>
-
-                <Text style={[styles.whiteTextVColor,styles.temperatureText]}>{forecastData.isLoading?<ActivityIndicator size={'large'}/>:temperature}</Text>
-                <Text style={[styles.whiteTextVColor,styles.dateText]}>{forecastData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:date}</Text>
-
-                <View style={styles.weatherIconContainer}>
-                    <Text style={[styles.whiteTextVColor,styles.weatherDescriptiontext]}>{forecastData.isLoading?<ActivityIndicator size={'small'} color={'white'}/>:feelsLike}</Text>
-                </View>
-
-                <View style={styles.nightAndDayContainer}>
-                    <Text style={[styles.whiteTextVColor,styles.nightAndDayText]}>{forecastData.isLoading?<ActivityIndicator size={'large'}/>:temperature}</Text>
-                    <Text style={[styles.whiteTextVColor,styles.nightAndDayText]}>Night -1</Text>
-                </View>
-    <StatusBar hidden={true}/>
-    </View>
-  )
-}else if(imageViewState===true){
-    return(
-        <View style={styles.compressedStateContainer}>
-            <Text style={styles.compressedTemperatureText}>{city}</Text>
-
-            <View style={{flexDirection:'row', justifyContent:'space-evenly' , alignItems:'center'}}>
-                <View>
-                <Text>{temperature}</Text>
-                <Text>{feelsLike}</Text>
-            </View>
-                <Image source={currentImageSrc} style={styles.compressedWeatherIcon}/>
-            </View>
-            <NavigationContainer/>
-        </View>
-    )
-}
+  )  
+  
 
 }
 

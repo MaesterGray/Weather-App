@@ -10,11 +10,9 @@ const queryClient = new QueryClient
 
 const tendays = () => {
   return (
-    <QueryClientProvider client={queryClient}>
       <Provider store={configurestore}>
       <Tendayscontainer />
       </Provider>
-    </QueryClientProvider>
   )
 }
 

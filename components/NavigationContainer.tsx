@@ -21,8 +21,6 @@ const NavigationContainer = () => {
     const [renderState,setrenderState]= useState('Today')
     const route = useLocalSearchParams()
 
-    
-    
 
   return (
     <FlatList contentContainerStyle={styles.navigationContainer}  horizontal={true} data={data} renderItem={({item})=>(
